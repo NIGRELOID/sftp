@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -e
+
+if test -z $USER -o -z $PASS; then
+	echo '$USER or $PASS are not set!'
+	exit 1
+fi
+
+if ! id $USER &> /dev/null; then
+	adduser -s /bin/false -G sftpshare -H -D $USER
+fi
+
+echo $USER:$PASS | chpasswd -e &> /dev/null
+
+if test ! -d /share/$USER/files; then
+	echo Creating folders...
+	mkdir -m 755 -p /share/$USER
+	chown root:root /share/$USER
+	mkdir -m 700 -p /share/$USER/files
+	chown $USER:sftpshare /share/$USER/files
+fi
+
+echo Starting up sshd...
+if test ! -e /etc/ssh/keys/id_ed25519; then
+	echo 'Hostkey not found, generating a new one...'
+	mkdir -p /etc/ssh/keys
+	ssh-keygen -t ed25519 -N '' -f /etc/ssh/keys/id_ed25519 &> /dev/null
+fi
+
+/usr/sbin/sshd -D -e

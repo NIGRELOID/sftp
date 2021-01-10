@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  sftp:
+    container_name: 'sftp_server'
+    build: .
+    env_file:
+      - 'users.env'
+    ports:
+      - '22:22'
+    # volumes:
+      # - './share:/sftp'
+      # - './secrets:/etc/ssh/keys'
