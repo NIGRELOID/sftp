@@ -1,0 +1,16 @@
+HostKey /etc/ssh/keys/id_ed25519
+LogLevel VERBOSE
+
+Port 22
+
+UseDNS no
+PermitRootLogin no
+X11Forwarding no
+AllowTcpForwarding no
+AllowAgentForwarding no
+PubkeyAuthentication=no
+
+Subsystem sftp internal-sftp
+Match Group sftpshare
+	ForceCommand internal-sftp
+	ChrootDirectory /share/%u
